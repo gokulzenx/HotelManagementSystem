@@ -29,4 +29,17 @@ public class RoomService {
 	public void deleteRoom(Long id) {
 		roomRepository.deleteById(id);
 	}
+	
+	public Room updateRoom(Long id, Room updatedRoom) {
+		Room existingRoom = roomRepository.findById(id).orElse(null);
+		if(existingRoom != null) {
+			existingRoom.setRoomNumber(updatedRoom.getRoomNumber());
+			existingRoom.setPricePerNight(updatedRoom.getPricePerNight());
+			existingRoom.setRoomType(updatedRoom.getRoomType());
+			existingRoom.setAvailable(updatedRoom.getAvailable());
+			
+			return roomRepository.save(existingRoom);
+		}
+		return null;
+	}
 }

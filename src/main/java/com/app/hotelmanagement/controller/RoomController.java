@@ -1,7 +1,7 @@
+
 package com.app.hotelmanagement.controller;
 
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,51 +11,71 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.app.hotelmanagement.entity.Room;
+import com.app.hotelmanagement.dto.RoomDTO;
 import com.app.hotelmanagement.service.RoomService;
 
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
-	
-	private final RoomService roomService;
-	
-	public RoomController(RoomService roomService) {
-		this.roomService = roomService;
-	}
-	
-	@GetMapping("/new/prefill")
-	public Room prefillRoom() {
-		return new Room();
-	}
 
-	@PostMapping
-	public Room addRoom(@RequestBody Room room) {
-		return roomService.addRoom(room);
-	}
-	
-	@GetMapping("/{id}")
-	public Room getRoomById(@PathVariable Long id) {
-		return roomService.getRoomById(id);
-	}
-	
-	@GetMapping
-	public List<Room> getAllRooms() {
-		return roomService.getAllRooms();
-	}
-	
-	@PutMapping("/{id}")
-	public ResponseEntity<Room> updateRoom(@PathVariable Long id, @RequestBody Room room) {
+    private final RoomService roomService;
 
-	    Room updatedRoom = roomService.updateRoom(id, room);
-	    if (updatedRoom == null) {
-	        return ResponseEntity.notFound().build();
-	    }
-	    return ResponseEntity.ok(updatedRoom);
-	}
-	
-	@DeleteMapping("/{id}")
-	public void deleteRoom(@PathVariable Long id) {
-		roomService.deleteRoom(id);
-	}
+    public RoomController(RoomService roomService) {
+        this.roomService = roomService;
+    }
+
+    @GetMapping("/new/prefill")
+    public RoomDTO prefillRoom() {
+        return new RoomDTO();
+    }
+
+    @PostMapping
+    public RoomDTO addRoom(@RequestBody RoomDTO roomDTO) {
+        return roomService.addRoom(roomDTO);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<RoomDTO> getRoomById(
+            @PathVariable Long id) {
+
+        RoomDTO roomDTO = roomService.getRoomById(id);
+
+        if (roomDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(roomDTO);
+    }
+
+    @GetMapping
+    public List<RoomDTO> getAllRooms() {
+        return roomService.getAllRooms();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<RoomDTO> updateRoom(
+            @PathVariable Long id,
+            @RequestBody RoomDTO roomDTO) {
+
+        RoomDTO updatedRoom = roomService.updateRoom(id, roomDTO);
+
+        if (updatedRoom == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(updatedRoom);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteRoom(
+            @PathVariable Long id) {
+
+        boolean deleted = roomService.deleteRoom(id);
+
+        if (!deleted) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.noContent().build();
+    }
 }

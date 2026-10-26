@@ -44,14 +44,12 @@ public class Room {
 		this.pricePerNight = pricePerNight;
 	}
 	
-	private Boolean available;
-	public Boolean getAvailable() {
-		return available;
+	private Boolean isAvailable;
+	public Boolean getIsAvailable() {
+		return isAvailable;
 	}
-	public void setAvailable(Boolean available) {
-		this.available = available;
+	public void setIsAvailable(Boolean isAvailable) {
+		this.isAvailable = isAvailable;
 	}
-
-	public Room() {
-	}
+	
 }

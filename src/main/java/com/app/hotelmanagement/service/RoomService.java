@@ -1,45 +1,102 @@
+
 package com.app.hotelmanagement.service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
+import com.app.hotelmanagement.dto.RoomDTO;
 import com.app.hotelmanagement.entity.Room;
 import com.app.hotelmanagement.repository.RoomRepository;
 
 @Service
 public class RoomService {
 
-	private final RoomRepository roomRepository;
-	
-	public RoomService(RoomRepository roomRepository) {
-		this.roomRepository = roomRepository;
-	}
-	
-	public Room addRoom(Room room) {
-		return roomRepository.save(room);
-	}
-	
-	public List<Room> getAllRooms() {
-		return roomRepository.findAll();
-	}
-	
-	public Room getRoomById(Long id) {
-		return roomRepository.findById(id).orElse(null);
-	}
-	
-	public void deleteRoom(Long id) {
-		roomRepository.deleteById(id);
-	}
-	
-	public Room updateRoom(Long id, Room updatedRoom) {
-		Room existingRoom = roomRepository.findById(id).orElse(null);
-		if(existingRoom != null) {
-			existingRoom.setRoomNumber(updatedRoom.getRoomNumber());
-			existingRoom.setPricePerNight(updatedRoom.getPricePerNight());
-			existingRoom.setRoomType(updatedRoom.getRoomType());
-			existingRoom.setAvailable(updatedRoom.getAvailable());
-			
-			return roomRepository.save(existingRoom);
-		}
-		return null;
-	}
+    private final RoomRepository roomRepository;
+
+    public RoomService(RoomRepository roomRepository) {
+        this.roomRepository = roomRepository;
+    }
+
+    private RoomDTO convertToDTO(Room room) {
+        RoomDTO dto = new RoomDTO();
+
+        dto.setId(room.getId());
+        dto.setRoomNumber(room.getRoomNumber());
+        dto.setRoomType(room.getRoomType());
+        dto.setPricePerNight(room.getPricePerNight());
+        dto.setIsAvailable(room.getIsAvailable());
+
+        return dto;
+    }
+
+    private Room convertToEntity(RoomDTO dto) {
+        Room room = new Room();
+
+        room.setRoomNumber(dto.getRoomNumber());
+        room.setRoomType(dto.getRoomType());
+        room.setPricePerNight(dto.getPricePerNight());
+        room.setIsAvailable(dto.getIsAvailable());
+
+        return room;
+    }
+
+    public RoomDTO addRoom(RoomDTO roomDTO) {
+        Room room = convertToEntity(roomDTO);
+
+        Room savedRoom = roomRepository.save(room);
+
+        return convertToDTO(savedRoom);
+    }
+
+    public List<RoomDTO> getAllRooms() {
+        List<Room> rooms = roomRepository.findAll();
+        List<RoomDTO> roomDTOs = new ArrayList<>();
+
+        for (Room room : rooms) {
+            RoomDTO dto = convertToDTO(room);
+            roomDTOs.add(dto);
+        }
+
+        return roomDTOs;
+    }
+
+    public RoomDTO getRoomById(Long id) {
+        Optional<Room> optionalRoom = roomRepository.findById(id);
+
+        if (optionalRoom.isPresent()) {
+            Room room = optionalRoom.get();
+            return convertToDTO(room);
+        }
+
+        return null;
+    }
+
+    public RoomDTO updateRoom(Long id, RoomDTO updatedRoomDTO) {
+        Room existingRoom = roomRepository.findById(id).orElse(null);
+
+        if (existingRoom != null) {
+            existingRoom.setRoomNumber(updatedRoomDTO.getRoomNumber());
+            existingRoom.setRoomType(updatedRoomDTO.getRoomType());
+            existingRoom.setPricePerNight(
+                    updatedRoomDTO.getPricePerNight());
+            existingRoom.setIsAvailable(
+                    updatedRoomDTO.getIsAvailable());
+
+            Room savedRoom = roomRepository.save(existingRoom);
+
+            return convertToDTO(savedRoom);
+        }
+
+        return null;
+    }
+
+    public boolean deleteRoom(Long id) {
+        if (!roomRepository.existsById(id)) {
+            return false;
+        }
+
+        roomRepository.deleteById(id);
+        return true;
+    }
 }

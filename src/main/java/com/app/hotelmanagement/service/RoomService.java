@@ -99,4 +99,34 @@ public class RoomService {
         roomRepository.deleteById(id);
         return true;
     }
+    
+    public RoomDTO getRoomByNumber(String roomNumber) {
+        Optional<Room> optionalRoom = roomRepository.findByRoomNumber(roomNumber);
+
+        if (optionalRoom.isPresent()) {
+            Room room = optionalRoom.get();
+            return convertToDTO(room);
+        }
+        return null;
+    }
+
+	public List<RoomDTO> searchByRoomType(String roomType) {
+		List<Room> rooms = roomRepository.findByRoomType(roomType);
+		
+		List<RoomDTO> roomDTOs = new ArrayList<>();
+		for(Room room : rooms) {
+			roomDTOs.add(convertToDTO(room));
+		}
+		return roomDTOs;
+	}
+
+	public List<RoomDTO> searchByAvailability(Boolean available) {
+	    List<Room> rooms = roomRepository.findByIsAvailable(available);
+
+	    List<RoomDTO> roomDTOs = new ArrayList<>();
+	    for (Room room : rooms) {
+	        roomDTOs.add(convertToDTO(room));
+	    }
+	    return roomDTOs;
+	}
 }

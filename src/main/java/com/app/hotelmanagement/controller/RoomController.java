@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.app.hotelmanagement.dto.RoomDTO;
 import com.app.hotelmanagement.service.RoomService;
@@ -35,15 +36,13 @@ public class RoomController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RoomDTO> getRoomById(
-            @PathVariable Long id) {
+    public ResponseEntity<RoomDTO> getRoomById(@PathVariable Long id) {
 
         RoomDTO roomDTO = roomService.getRoomById(id);
 
         if (roomDTO == null) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.ok(roomDTO);
     }
 
@@ -53,29 +52,42 @@ public class RoomController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RoomDTO> updateRoom(
-            @PathVariable Long id,
-            @RequestBody RoomDTO roomDTO) {
+    public ResponseEntity<RoomDTO> updateRoom(@PathVariable Long id, @RequestBody RoomDTO roomDTO) {
 
         RoomDTO updatedRoom = roomService.updateRoom(id, roomDTO);
-
         if (updatedRoom == null) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.ok(updatedRoom);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRoom(
-            @PathVariable Long id) {
-
+    public ResponseEntity<Void> deleteRoom(@PathVariable Long id) {
         boolean deleted = roomService.deleteRoom(id);
-
         if (!deleted) {
             return ResponseEntity.notFound().build();
         }
-
         return ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/search/number")
+    public ResponseEntity<RoomDTO> getRoomByNumber(@RequestParam String roomNumber) {
+
+        RoomDTO roomDTO = roomService.getRoomByNumber(roomNumber);
+        if (roomDTO == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(roomDTO);
+    }
+    
+    @GetMapping("/search/type")
+    public List<RoomDTO> searchByRoomType(@RequestParam String roomType) {
+    	return roomService.searchByRoomType(roomType);
+    }
+    
+    @GetMapping("/search/availability")
+    public List<RoomDTO> searchByAvailability(@RequestParam Boolean available) {
+
+        return roomService.searchByAvailability(available);
     }
 }

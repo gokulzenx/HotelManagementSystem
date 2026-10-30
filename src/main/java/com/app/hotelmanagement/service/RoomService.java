@@ -120,8 +120,8 @@ public class RoomService {
 		return roomDTOs;
 	}
 
-	public List<RoomDTO> searchByAvailability(Boolean available) {
-	    List<Room> rooms = roomRepository.findByIsAvailable(available);
+	public List<RoomDTO> searchByAvailability(Boolean isAvailable) {
+	    List<Room> rooms = roomRepository.findByIsAvailable(isAvailable);
 
 	    List<RoomDTO> roomDTOs = new ArrayList<>();
 	    for (Room room : rooms) {

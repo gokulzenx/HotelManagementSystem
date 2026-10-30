@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.app.hotelmanagement.dto.RoomDTO;
 import com.app.hotelmanagement.service.RoomService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/rooms")
 public class RoomController {
@@ -30,8 +32,8 @@ public class RoomController {
         return new RoomDTO();
     }
 
-    @PostMapping
-    public RoomDTO addRoom(@RequestBody RoomDTO roomDTO) {
+    @PostMapping("/save")
+    public RoomDTO addRoom(@Valid @RequestBody RoomDTO roomDTO) {
         return roomService.addRoom(roomDTO);
     }
 
@@ -52,7 +54,7 @@ public class RoomController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RoomDTO> updateRoom(@PathVariable Long id, @RequestBody RoomDTO roomDTO) {
+    public ResponseEntity<RoomDTO> updateRoom(@PathVariable Long id, @Valid @RequestBody RoomDTO roomDTO) {
 
         RoomDTO updatedRoom = roomService.updateRoom(id, roomDTO);
         if (updatedRoom == null) {
@@ -86,8 +88,8 @@ public class RoomController {
     }
     
     @GetMapping("/search/availability")
-    public List<RoomDTO> searchByAvailability(@RequestParam Boolean available) {
+    public List<RoomDTO> searchByAvailability(@RequestParam Boolean isAvailable) {
 
-        return roomService.searchByAvailability(available);
+        return roomService.searchByAvailability(isAvailable);
     }
 }
